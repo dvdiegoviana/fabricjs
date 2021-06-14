@@ -1206,6 +1206,10 @@ fabric.CommonMethods = {
       return canvasEl.toDataURL('image/' + format, quality);
     },
 
+    toBlob: function(canvasEl, format, quality, callback) {
+      canvasEl.toDataURL(callback, 'image/' + format, quality);
+    },
+
     /**
      * Creates image element (works on client and node)
      * @static
@@ -12132,6 +12136,17 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
       return fabric.util.toDataURL(canvasEl, format, quality);
     },
 
+    toBlob: function (options, callback) {
+      options || (options = { });
+
+      var format = options.format || 'png',
+          quality = options.quality || 1,
+          multiplier = (options.multiplier || 1) * (options.enableRetinaScaling ? this.getRetinaScaling() : 1),
+          canvasEl = this.toCanvasElement(multiplier, options);
+      
+      fabric.util.toBlob(canvasEl, format, quality, callback);
+    },
+
     /**
      * Create a new HTMLCanvas element painted with the current canvas content.
      * No need to resize the actual one or repaint it.
@@ -12351,6 +12366,12 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
   _toDataURL: function (format, callback) {
     this.clone(function (clone) {
       callback(clone.toDataURL(format));
+    });
+  },
+
+  _toBlob: function (format, callback) {
+    this.clone(function (clone) {
+      callback(clone.toBlob(format, callback));
     });
   },
 
@@ -14083,6 +14104,11 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
     toDataURL: function(options) {
       options || (options = { });
       return fabric.util.toDataURL(this.toCanvasElement(options), options.format || 'png', options.quality || 1);
+    },
+
+    toBlob: function(options, callback) {
+      options || (options = { });
+      fabric.util.toBlob(this.toCanvasElement(options), options.format || 'png', options.quality || 1, callback);
     },
 
     /**
@@ -19852,6 +19878,10 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
       if (element) {
         if (element.toDataURL) {
           return element.toDataURL();
+        }
+
+        if (element.toBlob) {
+          return element.toBlob();
         }
 
         if (this.srcFromAttribute) {
