@@ -3,8 +3,6 @@
 
 var fabric = fabric || { version: '2.7.0' };
 
-
-console.log(exports);
 if (typeof exports !== 'undefined') {
   exports.fabric = fabric;
 }
@@ -172,7 +170,6 @@ fabric.cachesBoundsOfCurve = true;
 
 fabric.initFilterBackend = function() {
   if (fabric.enableGLFiltering && fabric.isWebglSupported && fabric.isWebglSupported(fabric.textureSize)) {
-    console.log('max texture size: ' + fabric.maxTextureSize);
     return (new fabric.WebglFilterBackend({ tileSize: fabric.textureSize }));
   }
   else if (fabric.Canvas2dFilterBackend) {
@@ -1203,12 +1200,11 @@ fabric.CommonMethods = {
      * @return {String} data url
      */
     toDataURL: function(canvasEl, format, quality) {
-      console.log(16);
       return canvasEl.toDataURL('image/' + format, quality);
     },
 
     toBlob: function(canvasEl, format, quality, callback) {
-      canvasEl.toDataURL(callback, 'image/' + format, quality);
+      canvasEl.toBlob(callback, 'image/' + format, quality);
     },
 
     /**
@@ -12129,7 +12125,6 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
      */
     toDataURL: function (options) {
       options || (options = { });
-      console.log(19);
       var format = options.format || 'png',
           quality = options.quality || 1,
           multiplier = (options.multiplier || 1) * (options.enableRetinaScaling ? this.getRetinaScaling() : 1),
@@ -12365,15 +12360,8 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
    * @param {Function} callback
    */
   _toDataURL: function (format, callback) {
-    console.log(12);
     this.clone(function (clone) {
       callback(clone.toDataURL(format));
-    });
-  },
-
-  _toBlob: function (format, callback) {
-    this.clone(function (clone) {
-      callback(clone.toBlob(format, callback));
     });
   },
 
@@ -12384,7 +12372,6 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
    * @param {Function} callback
    */
   _toDataURLWithMultiplier: function (format, multiplier, callback) {
-    console.log(13);
     this.clone(function (clone) {
       callback(clone.toDataURLWithMultiplier(format, multiplier));
     });
@@ -14105,14 +14092,8 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
      * @return {String} Returns a data: URL containing a representation of the object in the format specified by options.format
      */
     toDataURL: function(options) {
-      console.log(14);
       options || (options = { });
       return fabric.util.toDataURL(this.toCanvasElement(options), options.format || 'png', options.quality || 1);
-    },
-
-    toBlob: function(options, callback) {
-      options || (options = { });
-      fabric.util.toBlob(this.toCanvasElement(options), options.format || 'png', options.quality || 1, callback);
     },
 
     /**
@@ -19881,12 +19862,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
       var element = filtered ? this._element : this._originalElement;
       if (element) {
         if (element.toDataURL) {
-          console.log(15);
           return element.toDataURL();
-        }
-
-        if (element.toBlob) {
-          return element.toBlob();
         }
 
         if (this.srcFromAttribute) {
